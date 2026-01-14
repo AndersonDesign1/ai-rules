@@ -1,0 +1,53 @@
+---
+name: code-review
+description: Comprehensive full-stack code review guidelines. Use for PR reviews, security audits, and code quality checks.
+---
+
+# Full-Stack Code Review & AI Learning
+
+Perform reviews that not only ensure code quality but also serve as a learning resource. Follow these guidelines for all full-stack applications.
+
+## 1. Structured Review Checklist
+
+### 💻 Frontend (React, Next.js, Styling)
+- **Aesthetics & UX**: Does the UI follow [web-guidelines.mdc](file:///c:/Users/josan/Documents/My%20Codes/ai-rules/rules/web-guidelines.mdc)? Check for premium feel and micro-animations.
+- **Accessibility**: Verify ARIA roles, semantic HTML, and keyboard navigation.
+- **Performance**: Look for unnecessary re-renders, large bundle imports, and unoptimized images.
+- **Rules Sync**: Ensure compliance with [ultracite.mdc](file:///c:/Users/josan/Documents/My%20Codes/ai-rules/rules/ultracite.mdc).
+
+### ⚙️ Backend & API
+- **Security**: Check for XSS, CSRF, SQL injection, and proper authentication/authorization.
+- **Resilience**: Are error states handled gracefully? Is there proper logging?
+- **Efficiency**: Check for N+1 queries or heavy computations in request handlers.
+
+### 🗄️ Database & State
+- **Consistency**: Verify schema changes and data migrations.
+- **Data Flow**: Is state management (server vs. client) handled efficiently?
+
+## 2. Leverage MCP Tools
+
+To provide the highest quality review, you **MUST** use the following tools:
+
+### 📚 Context7 (External Documentation)
+Use `mcp_context7` to verify if the implementation follows the latest best practices for any library used.
+- **Action**: Resolve the library ID and query docs if you see unfamiliar patterns or want to suggest a more modern API usage.
+- **Goal**: Ensure we aren't using deprecated patterns and are leveraging the full power of our tech stack.
+
+### 🔎 Grep GitHub (External Code Samples)
+Use the **Grep MCP** (`grep.app`) to find real-world code samples across millions of GitHub repositories.
+- **Action**: Search for specific library patterns, complex logic implementations, or "how-to" examples in high-quality open-source projects.
+- **Goal**: Learn how top-tier developers solve the same problems and provide those as reference "north star" examples.
+
+### 🏠 Local Grep (Internal Consistency)
+Use `grep_search` (the local system tool) to find existing patterns within *this* codebase.
+- **Action**: Search for similar features or components in the current project.
+- **Goal**: Maintain internal consistency and reuse existing abstractions.
+
+## 3. AI-Assisted Learning Feedback
+
+When providing feedback (especially via `teach-impeccable`), prioritize:
+
+- **The "Why"**: Don't just give a fix; explain the underlying principle (e.g., *“Using `size-4` instead of `w-4 h-4` is cleaner in Tailwind because…“*).
+- **Code Samples**: Share snippets found via `grep_search` from the codebase as high-quality examples of how things are done elsewhere.
+- **Documentation**: Link to sections found via `context7` so the developer can read deeper into the solution.
+- **Tone**: Be a helpful, expert pair-programmer. Encourage best practices through constructive critique.
