@@ -2,161 +2,122 @@
 alwaysApply: true
 ---
 
-Concise rules for building accessible, fast, delightful UIs Use MUST/SHOULD/NEVER to guide decisions
+Concise rules for building accessible, fast, delightful UIs. Use MUST/SHOULD/NEVER to guide decisions.
 
 ## Interactions
 
-- Keyboard
-  - MUST: All flows are keyboard-operable, following [WAI-ARIA APG](https://www.w3.org/WAI/ARIA/apg/patterns/).
-  - MUST: Every focusable element shows a visible focus ring. Prefer `:focus-visible` over `:focus` to avoid distracting pointer users; use `:focus-within` for groups.
-  - MUST: Manage focus (trap, move, and return) per APG patterns or WAI-ARIA guidelines.
+### Keyboard & Focus
+- MUST: All flows are keyboard-operable, following [WAI-ARIA Authoring Patterns](https://www.w3.org/WAI/ARIA/apg/patterns/).
+- MUST: Every focusable element shows a visible focus ring. Prefer `:focus-visible` over `:focus` to avoid distracting pointer users; use `:focus-within` for grouped controls.
+- MUST: Manage focus (trap, move, and return) according to WAI-ARIA patterns.
+- MUST: Semantic links (`<a>` or `<Link>`) for navigation to support standard browser behaviors (Cmd/Ctrl+Click, middle-click, right-click). NEVER substitute with `<button>` or `<div>` for navigation.
+- SHOULD: Localize keyboard shortcuts for non-QWERTY layouts and show platform-specific symbols.
 
-- Targets & Input
-  - MUST: Match visual and hit target. Visual targets <24px MUST have hit area expanded to ≥24px. On mobile, hit target MUST be ≥44px.
-  - MUST: Mobile `<input>` uses font-size ≥16px or set:
-    ```html
-    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, viewport-fit=cover">
-    ```
-  - NEVER: Disable browser zoom.
-  - MUST: Set `touch-action: manipulation` to prevent double-tap zoom.
-  - MUST: Set `-webkit-tap-highlight-color` to follow design.
-  - MUST: Design forgiving interactions—generous hit targets, clear affordances, avoid finickiness.
+### Targets & Touch
+- MUST: Match visual and hit targets. If visual target is < 24px, MUST expand hit target to ≥ 24px. On mobile, hit target MUST be ≥ 44px.
+- MUST: Mobile `<input>` font-size ≥ 16px to prevent iOS Safari auto-zoom, or set `viewport` with `initial-scale=1`.
+- MUST: Set `touch-action: manipulation` to prevent double-tap zoom on controls.
+- MUST: Set `-webkit-tap-highlight-color` to follow the design.
+- NEVER: Disable browser zoom.
 
-- Inputs & Forms (Behavior)
-  - MUST: Hydration-safe inputs (no lost focus or value after hydration).
-  - NEVER: Block paste in `<input>` or `<textarea>`.
-  - MUST: Loading buttons show a spinner and keep original label.
-  - MUST: Enter submits focused text input if possible. In `<textarea>`, ⌘/Ctrl+Enter submits, Enter inserts a newline.
-  - MUST: Keep submit enabled until request starts; then disable, show spinner, and use idempotency key.
-  - MUST: Do not block typing—accept free text, validate after input.
-  - MUST: Allow incomplete forms to submit and surface validation.
-  - MUST: Errors inline next to fields; on submit, focus first error.
-  - MUST: Use `autocomplete` with meaningful `name`, and correct `type` and `inputmode`.
-  - MUST: Every control has a `<label>` or is associated with a label for a11y.
-  - MUST: Clicking a `<label>` focuses corresponding input.
-  - SHOULD: Disable spellcheck for emails, codes, usernames.
-  - SHOULD: Placeholders end with ellipsis and show example pattern (eg, `+1 (123) 456-7890`, `sk-012345…`).
-  - MUST: Warn on unsaved changes before navigation.
-  - MUST: Compatible with password managers and 2FA; do not block one-time code paste.
-  - MUST: Trim values to handle input method expansion/trailing spaces.
-  - MUST: No input dead zones—checkbox or radio label/control share one generous hit target.
-  - SHOULD: Allow submitting incomplete forms for validation feedback.
-  - MUST: Autocomplete and autofill fields appropriately.
-  - MUST: On Windows, set background-color and color for `<select>` to avoid dark-mode system style bugs.
+### State & Feedback
+- MUST: Hydration-safe inputs—must not lose focus or value after hydration.
+- MUST: Deep-link everything. URL MUST reflect state (filters, tabs, pagination, expanded panels, `useState`). Use libs like [nuqs](https://nuqs.dev).
+- MUST: Back/Forward navigation restores previous scroll positions.
+- SHOULD: Optimistic UI—update immediately on success-likely actions, reconcile on server, show error/rollback/undo on failure.
+- MUST: Confirm destructive actions or provide an Undo window.
+- MUST: Announce async updates with polite `aria-live` for toasts and inline validation.
+- SHOULD: Menu options that open follow-ups (e.g., "Rename…") or loading/processing states (e.g., "Saving…") MUST end with an ellipsis character `…`.
 
-- State & Navigation
-  - MUST: URL reflects state (deep-link filters, tabs, pagination, expanded panels). Prefer libs like [nuqs](https://nuqs.dev).
-  - MUST: Back/Forward restores previous scroll.
-  - MUST: Links are semantic—use `<a>`/`<Link>` for navigation (supports Cmd/Ctrl/Right/Middle-click).
-  - MUST: Scroll positions persist.
+### Loading & Timing
+- MUST: Loading buttons show a spinner and keep the original label.
+- MUST: Add a short show-delay (~150–300ms) and a minimum visible time (~300–500ms) for spinners/skeletons to avoid flicker on fast responses.
+- MUST: Delay the first tooltip in a group; subsequent peer tooltips MUST have no delay.
 
-- Feedback
-  - SHOULD: Optimistic UI—update immediately, reconcile on server, show rollback or undo on errors.
-  - MUST: Confirm destructive actions, or provide an Undo window.
-  - MUST: Use polite `aria-live` on toasts and inline validation.
-  - SHOULD: Use ellipsis (`…`) for options that open follow-ups (e.g., "Rename…") or loading ("Loading…", "Saving…").
-  - MUST: Announce async updates with ARIA live regions.
-
-- Touch/Drag/Scroll
-  - MUST: Delay first tooltip in a group; no delay on subsequent tooltips.
-  - MUST: Use intentional `overscroll-behavior: contain` for modals/drawers.
-  - MUST: During drag, disable text selection and set `inert` on dragged element/containers.
-  - MUST: No “dead-looking” zones—if it looks clickable, it is.
-  - MUST: Clean drag interactions—prevent unwanted selection and hover during drag.
-
-- Autofocus
-  - SHOULD: Use autofocus on desktop when there’s a single primary input. Rarely use on mobile to avoid keyboard shift.
-
-- Shortcuts
-  - SHOULD: Localize keyboard shortcuts.
-  - SHOULD: Show platform-specific symbols.
+### Scroll & Drag
+- MUST: Use intentional `overscroll-behavior: contain` for modals/drawers.
+- MUST: Clean drag interactions—disable text selection and apply `inert` to background elements so selection/hover don't occur simultaneously.
+- MUST: Design forgiving interactions—generous hit targets, clear affordances, and predictable behavior (e.g., prediction cones).
+- MUST: No "dead zones"—if it looks interactive, it MUST be interactive.
 
 ## Animation
-
-- MUST: Honor `prefers-reduced-motion`. Provide a reduced-motion variant.
-- SHOULD: Prefer CSS > Web Animations API > JavaScript libraries (eg, motion).
-- MUST: Animate compositor-friendly properties (`transform`, `opacity`). Avoid animating `top`, `left`, `width`, `height`.
-- SHOULD: Animate only to clarify cause/effect or for deliberate delight.
-- SHOULD: Choose easing to match the change (size/distance/trigger).
-- MUST: Animations are interruptible and input-driven—avoid autoplay.
-- MUST: Set correct `transform-origin` (motion starts where it “physically” should).
-- NEVER: `transition: all`—always specify only necessary properties.
-- SHOULD: For SVG, animate `<g>` wrappers and set `transform-box: fill-box; transform-origin: center` for cross-browser correctness.
+- MUST: Honor `prefers-reduced-motion` with a reduced-motion variant.
+- SHOULD: Prefer CSS > Web Animations API > JavaScript libraries (e.g., motion). Avoid main-thread JS animations when possible.
+- MUST: Animate compositor-friendly properties (`transform`, `opacity`). NEVER use `transition: all`.
+- MUST: Animations MUST be interruptible by user input and input-driven (avoid autoplay).
+- MUST: Set correct `transform-origin` (anchor motion to where it physically starts).
+- SHOULD: For SVG, animate `<g>` wrappers and set `transform-box: fill-box; transform-origin: center` for cross-browser correctness (Safari fixes).
 
 ## Layout
-
-- MUST: Use `size-` utilities (eg, `size-4`) instead of `w-`/`h-` for size in Tailwind CSS.
-- NEVER: Use `space-x-`, `space-y-`, or any hardcoded Tailwind utilities like `mb`, `mr`, `ml`, `mt`, etc. for spacing.  
-- MUST: Use CSS grid or flexbox for layout and spacing; leverage `gap` for inter-element spacing.
-- MUST: Let the browser handle sizing/layout—prefer flex/grid/intrinsic flow instead of sizing in JS.
-- SHOULD: Adjust by ±1px when perception beats geometry (optical alignment).
-- MUST: All alignment is deliberate—to grid, baseline, edge, or optical center; never accidental.
-- SHOULD: Balance icon/text lockups—adjust stroke, weight, size, spacing, or color for harmony.
-- MUST: Verify on mobile, laptop, and ultra-wide (simulate ultra-wide at 50% zoom).
-- MUST: Respect safe areas (`env(safe-area-inset-*)`).
-- MUST: Avoid unwanted scrollbars; fix overflows.
-- MUST: Avoid excessive scrollbars—test with always-on scrollbars enabled.
-- SHOULD: Use `content-visibility: auto` or virtualize large lists.
-- MUST: Explicitly set image dimensions to prevent CLS.
-- SHOULD: Use preconnect/preload wisely (fonts, assets); minimize critical path.
+- SHOULD: Use optical alignment (adjust ±1px) when perception beats geometry.
+- MUST: All alignment is deliberate—to grid, baseline, edge, or optical center; NEVER accidental.
+- MUST: Let the browser handle layout—prefer flex/grid/intrinsic flow instead of measuring in JS.
+- MUST: Verify on mobile, laptop, and ultra-wide (test ultra-wide at 50% zoom).
+- MUST: Respect safe areas (`env(safe-area-inset-*)`) for notches and insets.
+- MUST: Avoid unwanted or excessive scrollbars. Test with macOS "Show scroll bars: Always" enabled.
+- MUST: Explicitly set image dimensions or reserve space to prevent CLS.
 
 ## Content & Accessibility
+- SHOULD: Prefer inline help over tooltips.
+- MUST: Skeletons MUST mirror final content exactly to prevent layout shift.
+- MUST: Accurate `<title>` reflecting the current context.
+- MUST: No dead ends—every screen MUST offer a next step or recovery path.
+- MUST: Design all states explicitly: empty, sparse, dense, and error.
+- SHOULD: Use typographic curly quotes (“ ”) and the ellipsis character `…`.
+- MUST: Use tabular numbers for comparisons (`font-variant-numeric: tabular-nums` or Geist Mono).
+- MUST: Resilient to user-generated content (short vs very long).
+- MUST: Locale-aware formatting for dates, times, numbers, and currencies.
+- SHOULD: Detect language via `Accept-Language` header; NEVER rely solely on IP/GPS.
+- MUST: Accessible names—use `aria-label` for icon-only buttons, mark decor with `aria-hidden`, and verify in the Accessibility Tree.
+- MUST: Prefer native semantics (`button`, `a`, `label`, `table`) over ARIA roles.
+- MUST: Use non-breaking spaces `&nbsp;` for glued terms: `10&nbsp;MB`, `⌘&nbsp;+&nbsp;K`, `Vercel&nbsp;SDK`.
+- SHOULD: Right-click nav logo surfaces brand assets.
 
-- SHOULD: Prefer inline help; use tooltips only as a last resort.
-- MUST: Skeletons mirror final content exactly to prevent layout shift.
-- MUST: `<title>` matches current context.
-- MUST: Provide a next step or graceful recovery for all screens; avoid dead ends.
-- MUST: Design empty/sparse/dense/error states explicitly.
-- SHOULD: Use curly quotes (“ ”); avoid widows/orphans.
-- MUST: Use tabular numbers for comparisons (`font-variant-numeric: tabular-nums` or monospace).
-- MUST: Provide redundant status cues (not color-only); icons need text labels.
-- MUST: Accessible names—visual layouts may omit visible labels, but accessibility names always exist.
-- MUST: Use the ellipsis character `…` over three dots.
-- MUST: Add `scroll-margin-top` to headings, use a “Skip to content” link, and follow `<h1>–<h6>` hierarchy.
-- MUST: Be resilient to user-generated content (short, average, very long).
-- MUST: Locale-aware formatting for dates/times/numbers/currency.
-- MUST: Use accurate names (`aria-label`), mark decor with `aria-hidden`, verify in Accessibility Tree.
-- MUST: Icon-only buttons have descriptive `aria-label`.
-- MUST: Prefer native semantics (`button`, `a`, `label`, `table`) before ARIA roles/properties.
-- SHOULD: Right-click the nav logo surfaces brand assets.
-- MUST: Use non-breaking spaces for glued terms: `10&nbsp;MB`, `⌘&nbsp;+&nbsp;K`, `Vercel&nbsp;SDK`.
-- SHOULD: Headings and skip link are hierarchical and accessible.
-- MUST: Placeholder values are explicit examples, end with an ellipsis.
-- MUST: Warn users of unsaved changes before navigation.
-- SHOULD: Error messages are actionable—teach users how to recover.
+## Forms
+- MUST: Enter submits focused text input if it's the only control (or the last one). In `<textarea>`, ⌘/Ctrl+Enter submits, Enter inserts a newline.
+- MUST: Every control has a `<label>` (associated by ID). Clicking a label MUST focus the control.
+- MUST: Keep submit enabled until request starts; then disable, show spinner, and use an idempotency key. NEVER pre-disable submit; allow submission to surface validation.
+- MUST: Don't block typing—accept any input and show validation feedback.
+- MUST: No dead zones on checkboxes/radios—label and control MUST share one generous hit target.
+- MUST: Errors placed inline next to fields; on submit, focus the first error.
+- MUST: Use `autocomplete` with meaningful `name` and correct `type`/`inputmode`.
+- MUST: Don't trigger password managers for non-auth fields (like Search). Use `autocomplete="one-time-code"` for OTP.
+- MUST: Warn on unsaved changes before navigation.
+- MUST: Windows: explicitly set `background-color` and `color` for native `<select>` to avoid dark-mode contrast bugs.
 
 ## Performance
-
-- SHOULD: Test iOS Low Power Mode and macOS Safari.
-- MUST: Measure reliably—disable extensions that impact runtime.
-- MUST: Track and minimize re-renders (use React DevTools/Scan).
-- MUST: Profile with CPU/network throttling.
-- MUST: Batch layout reads/writes to prevent reflows/repaints.
-- MUST: POST/PATCH/DELETE mutations return within <500ms.
+- MUST: Measure reliably—disable overhead-adding extensions. Profile with CPU/network throttling.
+- MUST: Track and minimize re-renders (React Scan/DevTools).
+- MUST: Network latency budget: `POST/PATCH/DELETE` MUST return within < 500ms.
 - SHOULD: Prefer uncontrolled inputs; optimize controlled loops for keystroke cost.
-- MUST: Virtualize large lists (eg, `virtua`); use `content-visibility: auto` for dense UIs.
-- MUST: Preload only above-the-fold images; lazy-load the rest.
-- MUST: Prevent CLS by always specifying image dimensions or reserving space.
-- MUST: Subset/optimize fonts and assets for performance.
-- MUST: Move long-running main-thread JS to workers if possible.
+- MUST: Virtualize large lists or use `content-visibility: auto`.
+- MUST: Preload only above-the-fold images and critical fonts; lazy-load everything else.
+- MUST: Subset fonts using `unicode-range`; ship only used code points.
+- SHOULD: Move expensive main-thread JS to Web Workers.
+- MUST: Use `<link rel="preconnect">` for asset/CDN domains.
 
 ## Design
-
-- SHOULD: Layered shadows—use at least two for ambient + direct light.
+- SHOULD: Layered shadows (min 2 layers) for ambient + direct light.
 - SHOULD: Crisp edges—combine semi-transparent borders + shadows.
-- SHOULD: Nested radii—child ≤ parent, concentric.
-- SHOULD: Hue consistency—tint borders/shadows/text to match bg hue.
-- MUST: Charts are accessible—use color-blind-friendly palettes.
-- MUST: Meet minimum contrast—prefer [APCA](https://apcacontrast.com/) over WCAG 2.
-- MUST: Increase contrast on `:hover`, `:active`, `:focus`.
-- SHOULD: Browser UI matches page background (`theme-color`, color-scheme).
-- SHOULD: Avoid gradient banding—use masks when needed.
-- SHOULD: Animate wrapper elements instead of text nodes to avoid font smoothing artifacts.
+- SHOULD: Nested radii—child radius ≤ parent radius and concentric.
+- SHOULD: Hue consistency—tint borders/shadows/text to match background hue on non-neutral surfaces.
+- MUST: Increase contrast on `:hover`, `:active`, and `:focus`.
+- MUST: Charts MUST be accessible and color-blind friendly.
+- MUST: Meet contrast requirements—prefer [APCA](https://apcacontrast.com/) over WCAG 2.
+- MUST: Browser UI MUST match background via `<meta name="theme-color">`.
+- MUST: Set `color-scheme` (dark/light) on `<html>` so device UI (scrollbars) matches the theme.
+- SHOULD: Avoid gradient banding—use masks if needed.
+- SHOULD: Animate wrappers instead of text nodes to avoid smoothing artifacts; use `translateZ(0)` or `will-change: transform` if jank persists.
 
-## Brand-specific
-
-- Active voice: "Install the CLI" instead of "The CLI will be installed".
-- Title case for headings/buttons (Chicago). On marketing, use sentence case.
-- Concise, clear, action-focused copywriting in second person.
-- Non-breaking spaces between numbers and units, command keys, or proper names.
-- Consistent placeholders and currency formatting.
+## Copywriting
+- MUST: Use Active Voice ("Install the CLI" vs "The CLI will be installed").
+- MUST: Title Case for headings/buttons (Chicago). On marketing, use sentence case.
+- MUST: Frame messages positively—errors MUST guide the user to an exit/fix.
+- MUST: Use numerals for counts ("8 deployments" vs "eight").
+- SHOULD: Prefer `&` over `and`.
+- MUST: Separate numbers and units with a space (e.g., `10 MB`).
+- MUST: Be clear and concise—use as few words as possible.
+- MUST: Use consistent placeholders (Strings: `YOUR_API_TOKEN_HERE`, Numbers: `0123456789`).
+- MUST: Write in second person; avoid first person.
+- MUST: Consistent nouns—limit unique terms.
+- MUST: Consistent currency—don't mix decimal place counts in the same context.
